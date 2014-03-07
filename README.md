@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `test`.`Host` (
   `hostname` VARCHAR(45) NULL,
   `ip` VARCHAR(45) NULL,
   `create_time` DATETIME NULL,
-  `cpu_count` INT NULL,
+  `cpu_count` INT NULL, 
   `memory` INT NULL,
   `os` VARCHAR(200) NULL,
   `worker_num` INT NOT NULL DEFAULT 6,
