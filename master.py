@@ -2,10 +2,10 @@
 #
 # -*- coding:utf-8 -*-
 #
-#   Author  :   
-#   E-mail  :   
-#   Date    :   2014/02/25 
-#   Desc    :
+#   Author  :   YunJianFei
+#   E-mail  :   yunjianfei@126.com
+#   Date    :   2014/02/25
+#   Desc    :   
 #
 
 """  
