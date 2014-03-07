@@ -13,7 +13,7 @@
 
 The Host table's create sql is : 
 
-CREATE TABLE IF NOT EXISTS `svc-cluster`.`Host` (
+CREATE TABLE IF NOT EXISTS `test`.`Host` (
   `host_id` INT NOT NULL AUTO_INCREMENT,
   `host_type` INT NULL,
   `hostname` VARCHAR(45) NULL,
