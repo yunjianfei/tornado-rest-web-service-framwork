@@ -3,6 +3,8 @@ tornado-rest-web-service-framwork
 
 Use tornado make rest web service
 
+=================================
+
 First, you must create database 'test', use Mysql.
 
 Then, you must create table 'Host':
@@ -24,10 +26,23 @@ CREATE TABLE IF NOT EXISTS `test`.`Host` (
 ENGINE = InnoDB;
 
 
-After create table, you can start the tornado server by master.py, the command is :
+After create table, you must modify the config file 'svc.conf' in the dir 'conf', to set mysql's parameter.
+
+###########################mysql config########################
+[db]
+db_name=test
+db_host=
+db_port=3306
+db_user=root
+db_pass=
+
+
+At last, you can start the tornado server by master.py, the command is :
 ./master.py --port=9999
 
 The port parameter can set by yourself.
+
+And you can test the tornado server by 'test_client.py' in the 'client' dir.
 
 
 
