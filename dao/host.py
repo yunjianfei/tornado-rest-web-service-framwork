@@ -29,8 +29,9 @@ ENGINE = InnoDB;
 
 """
 
-from util.dbconst import TableName, TableFields, TableSelectSql
+from util.dbconst import TableSelectSql
 import logging
+
 
 class HostDao:
     def __init__(self, db):
@@ -46,11 +47,11 @@ class HostDao:
 
     def if_exist(self, hostname, ip):
         ret = self.get_by_hostname(hostname)
-        if ret != None:
+        if ret is not None:
             return True
 
         ret = self.get_by_ip(ip)
-        if ret != None:
+        if ret is not None:
             return True
 
         return False
@@ -74,7 +75,7 @@ class HostDao:
     def get_id_by_hostname(self, hostname):
         sql = TableSelectSql.HOST + " where hostname='" + str(hostname)+"'"
         ret = self.db.get(sql)
-        if ret != None:
+        if ret is not None:
             return ret.host_id
         return None
 

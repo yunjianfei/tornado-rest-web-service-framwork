@@ -8,40 +8,41 @@
 #   Desc    :   Test db 
 #
 
-import json,logging
+import logging
 from util.config import Config
-from util.dict import HostType 
-import util.globalvar as GlobalVar
 from util import torndb
-from util.dbconst import TableName,TableFields,TableSelectSql
+from util.dbconst import TableFields, TableSelectSql
 import util.globalvar as GlobalVar
 from dao.host import HostDao
 
-import types
+CONF_FILE = "conf/svc.conf"
 
-CONF_FILE="conf/svc.conf"
 
-#The config file parser
+# The config file parser
 def parse_config(conf_file):
-    #parse conf file
+    # parse conf file
     conf = Config(conf_file)
     conf.load_conf()
 
-#Init logging
+
+# Init logging
 def init_logging():
     sh = logging.StreamHandler()
     logger = logging.getLogger()
     logger.setLevel(Config.log_level)
 
     ###########This set the logging level that show on the screen#############
-    #sh.setLevel(logging.DEBUG)
-    #sh.setLevel(logging.ERROR)
+    # sh.setLevel(logging.DEBUG)
+    # sh.setLevel(logging.ERROR)
 
-    formatter = logging.Formatter('%(asctime)s -%(module)s:%(filename)s-L%(lineno)d-%(levelname)s: %(message)s')
+    formatter = logging.Formatter(
+        '%(asctime)s -%(module)s:%(filename)s-L%(lineno)d-%(levelname)s: %(message)s')
     sh.setFormatter(formatter)
 
     logger.addHandler(sh)
-    logging.info("Current log level is : %s",logging.getLevelName(logger.getEffectiveLevel()))
+    logging.info("Current log level is : %s",
+                 logging.getLevelName(logger.getEffectiveLevel()))
+
 
 def test_host(db):
     dao = HostDao(db)
@@ -52,13 +53,13 @@ def test_host(db):
     print "insert host : %s, ret: %s" % (str(host), str(ret))
 
     h = dao.get_by_hostname('test1')
-    print "get by hostname, result:%s" , str(h)
+    print "get by hostname, result:%s", str(h)
 
-    #ret = dao.del_by_hostname('test_host')
+    # ret = dao.del_by_hostname('test_host')
 
-    ret=dao.update_worker_num_by_hostname('test1', 20)
+    ret = dao.update_worker_num_by_hostname('test1', 20)
     print ret
-    
+
 
 def main():
     ############parse and load config file###############
@@ -80,5 +81,5 @@ def main():
     test_host(db)
 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main()

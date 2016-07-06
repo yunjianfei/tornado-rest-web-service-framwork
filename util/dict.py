@@ -15,6 +15,7 @@ Note: All type class use the ENUM structure, the type's value must start at 0, a
 
 """
 
+
 class HostType:
     MASTER = 0
     DISPATHER = 1
@@ -22,9 +23,9 @@ class HostType:
     MAX_TYPE = 3
 
     to_string = {
-        MASTER : "Master",
-        DISPATHER : "Dispather",
-        AGENT : "Agent",
+        MASTER: "Master",
+        DISPATHER: "Dispather",
+        AGENT: "Agent",
     }
 
     def check(self, hosttype):
@@ -32,4 +33,3 @@ class HostType:
             if hosttype == i:
                 return True
         return False
-

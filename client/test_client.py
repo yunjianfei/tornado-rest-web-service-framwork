@@ -8,13 +8,15 @@
 #   Desc    :   Test db
 #
 
-import time,signal,logging,os
+import time
+import signal
+import logging
 import urllib
-import urllib2
 import tornado.httpclient
 import tornado
 import json
 from tornado.httpclient import AsyncHTTPClient
+
 
 def make_qs(query_args):
     kv_pairs = []
@@ -30,9 +32,11 @@ def make_qs(query_args):
 
     return qs
 
+
 def sig_handler(sig, frame):
     logging.warning('Caught signal: %s', sig)
     tornado.ioloop.IOLoop.instance().add_callback(shutdown)
+
 
 def shutdown():
     logging.info('Will shutdown in %s seconds ...', 2)
@@ -67,14 +71,15 @@ def handle_request(response):
 
     #tornado.ioloop.IOLoop.instance().stop()
 
+
 def test_host(http_client):
-    host = {}
+    host = dict()
     host['hostname'] = "test9"
     host['ip'] = '192.168.10.47'
     host['worker_num'] = 29
     host['host_id'] = '4'
 
-    #test add
+    # test add
     url = "http://192.168.10.47:9999/host"
     http_client.fetch(url, handle_request, method='POST', body=json.dumps(host))
 
@@ -93,6 +98,7 @@ def test_host(http_client):
     #url = "http://192.168.10.47:9999/host?hostname='test3'"
     #url = "http://192.168.10.47:9999/host?host_id='100'"
     http_client.fetch(url, handle_request, method='GET')
+
 
 def main():
     ##############set signal handler#######################

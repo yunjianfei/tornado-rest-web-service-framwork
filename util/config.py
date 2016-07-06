@@ -10,7 +10,7 @@
 #
 
 import ConfigParser
-import string,os,sys
+import os
 import logging
 
 
@@ -21,7 +21,7 @@ class Config:
     db_port = None
     db_user = None
     db_pass = None
-    
+
     #####################log config########################
     log_level = None
     log_path = None
@@ -54,31 +54,30 @@ class Config:
             return 0
         else:
             return -1
-    
+
     def get_db_name(self):
         '''  get mysql db name '''
-        return self.cf.get("db", "db_name") 
+        return self.cf.get("db", "db_name")
 
     def get_db_host(self):
         '''  get mysql db host '''
-        return self.cf.get("db", "db_host") 
+        return self.cf.get("db", "db_host")
 
     def get_db_port(self):
         '''  get mysql db port '''
-        return self.cf.get("db", "db_port") 
+        return self.cf.get("db", "db_port")
 
     def get_db_user(self):
         '''  get mysql db username '''
-        return self.cf.get("db", "db_user") 
+        return self.cf.get("db", "db_user")
 
     def get_db_pass(self):
         '''  get mysql db password '''
-        return self.cf.get("db", "db_pass") 
-
+        return self.cf.get("db", "db_pass")
 
     def get_log_path(self):
         '''  get log path '''
-        path = self.cf.get("log", "log_path") 
+        path = self.cf.get("log", "log_path")
         if path == "" or path == None or not os.path.exists(path):
             return os.path.join(os.getcwd(), "log")
         else:

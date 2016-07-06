@@ -12,11 +12,13 @@
 class TableName:
     HOST = "Host"
 
+
 class TableFields:
     HOST = None
 
     def __init__(self, db):
         TableFields.HOST = db.get_fields_str(TableName.HOST)
+
 
 class TableSelectSql:
     HOST = None

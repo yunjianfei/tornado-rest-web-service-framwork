@@ -10,13 +10,14 @@
 #
 
 import tornado.web
-import json,logging,types,time
+import json
+import logging
+import time
 from util.config import Config
 from util.dict import HostType 
 from util.httpresponse import Response as Resp, ResponseCode as RespCode
 from util import tools
 from dao.host import HostDao
-import util.globalvar as GlobalVar
 
 
 class HostHandler(tornado.web.RequestHandler):
@@ -36,11 +37,11 @@ class HostHandler(tornado.web.RequestHandler):
         host_id = tools.to_int(host_id)
 
         resp = None 
-        if hostname != None:
+        if hostname is not None:
             logging.info("In GET method! Get host by hostname: '%s'", str(hostname))
             host = self.host_dao.get_by_hostname(hostname)
             resp = host
-        elif host_id != None:
+        elif host_id is not None:
             logging.info("In GET method! Get host by host_id: '%s'", str(host_id))
             host = self.host_dao.get_by_id(host_id)
             resp = host
@@ -51,7 +52,7 @@ class HostHandler(tornado.web.RequestHandler):
 
         logging.info("Query result: %s", str(resp))
 
-        if resp == None or len(resp) == 0:
+        if resp is None or len(resp) == 0:
             logging.error("There is no record! ")
             resp = self.Resp.make_response(code=RespCode.NO_RECORD)
             self.write(resp)
@@ -59,7 +60,6 @@ class HostHandler(tornado.web.RequestHandler):
 
         resp = self.Resp.make_response(code=RespCode.SUCCESS, content=resp)
         self.write(resp)
-
 
     def post(self):
         """
@@ -70,10 +70,10 @@ class HostHandler(tornado.web.RequestHandler):
 
         logging.info("In POST method. Receive data: %s", str(data))
         
-        ## start check parameters
+        # start check parameters
         hostname = h.get('hostname', None)
         hostname = tools.strip_string(hostname)
-        if hostname == None:
+        if hostname is None:
             logging.error("There is no parameter 'hostname'! ")
             resp = self.Resp.make_response(code=RespCode.NO_PARAMETER, para='hostname')
             self.write(resp)
@@ -81,22 +81,22 @@ class HostHandler(tornado.web.RequestHandler):
 
         ip = h.get('ip', None)
         ip = tools.strip_string(ip)
-        if ip == None:
+        if ip is None:
             logging.error("There is no parameter 'ip'! ")
             resp = self.Resp.make_response(code=RespCode.NO_PARAMETER, para='ip')
             self.write(resp)
             return
 
-        #check if exist
+        # check if exist
         if_exist = self.host_dao.if_exist(hostname, ip)
-        if if_exist == True:
+        if if_exist is True:
             logging.error("The host has existed!")
             resp = self.Resp.make_response(code=RespCode.HAS_EXISTED, para='Host')
             self.write(resp)
             return
 
         host_type = tools.to_int(h.get('host_type', 0))
-        if host_type == None or self.HostType.check(host_type) != True:
+        if host_type is None or self.HostType.check(host_type) != True:
             logging.error("The value of parameter 'host_type' is invalid!")
             resp = self.Resp.make_response(code=RespCode.INVALID_PARAMETER, para='host_type')
             self.write(resp)
@@ -108,13 +108,13 @@ class HostHandler(tornado.web.RequestHandler):
         comment = h.get('comment', '')
 
         worker_num = tools.to_int(h.get('worker_num', 0))
-        if worker_num == None or worker_num == 0:
+        if worker_num is None or worker_num == 0:
             worker_num = Config.default_worker_num
 
         logging.debug("Check parameters complete, ready to save in db")
 
-        ## save in db
-        host = {}
+        # save in db
+        host = dict()
         host['hostname'] = hostname
         host['host_type'] = host_type
         host['ip'] = ip
@@ -127,7 +127,7 @@ class HostHandler(tornado.web.RequestHandler):
         host['create_time'] = create_time
 
         ret = self.host_dao.insert_by_dict(host)
-        if ret == None:
+        if ret is None:
             err_str = "Error oucurred when insert into table 'Host'"
             logging.error(err_str)
             resp = self.Resp.make_response(code=RespCode.DB_ERROR, err_str=err_str)
@@ -140,7 +140,6 @@ class HostHandler(tornado.web.RequestHandler):
         resp = self.Resp.make_response(code=RespCode.SUCCESS, content=host)
         self.write(resp)
 
-
     def put(self):
         """
             The put method is used to modify the Host's worker_num
@@ -150,28 +149,24 @@ class HostHandler(tornado.web.RequestHandler):
 
         logging.info("In PUT method! Receive data: %s", str(data))
         
-        ## start check parameters
+        # start check parameters
         hostname = h.get('hostname', None)
         host_id = h.get('host_id', None)
         hostname = tools.strip_string(hostname)
         host_id = tools.to_int(host_id)
 
         worker_num = tools.to_int(h.get('worker_num', 0))
-        if worker_num == None or worker_num == 0:
+        if worker_num is None or worker_num == 0:
             logging.error("There is no parameter 'worker_num'! ")
             resp = self.Resp.make_response(code=RespCode.NO_PARAMETER, para='worker_num')
             self.write(resp)
             return
 
-        ret = None
-        err_str = ""
-        host = None
-        
-        if hostname != None:
+        if hostname is not None:
             ret = self.host_dao.update_worker_num_by_hostname(hostname, worker_num)
             err_str = "Error oucurred when Update host by hostname '%s', worker_num: %s" % (hostname, str(worker_num))
             host = self.host_dao.get_by_hostname(hostname)
-        elif host_id != None:
+        elif host_id is not None:
             ret = self.host_dao.update_worker_num_by_id(host_id, worker_num)
             err_str = "Error oucurred when Update host by host_id '%s', worker_num: %s" % (str(host_id), str(worker_num))
             host = self.host_dao.get_by_id(host_id)
@@ -181,13 +176,13 @@ class HostHandler(tornado.web.RequestHandler):
             self.write(resp)
             return
 
-        if ret == None:
+        if ret is None:
             logging.error(err_str)
             resp = self.Resp.make_response(code=RespCode.DB_ERROR, err_str=err_str)
             self.write(resp)
             return
 
-        if host == None:
+        if host is None:
             logging.info("No record!")
             resp = self.Resp.make_response(code=RespCode.NO_RECORD)
             self.write(resp)
@@ -197,7 +192,6 @@ class HostHandler(tornado.web.RequestHandler):
         resp = self.Resp.make_response(code=RespCode.SUCCESS, content=host)
         self.write(resp)
 
-
     def delete(self):
         """
             The DELETE method is used to delete Host object
@@ -206,14 +200,12 @@ class HostHandler(tornado.web.RequestHandler):
         host_id = self.get_argument('host_id', None)
         hostname = tools.strip_string(hostname)
         host_id = tools.to_int(host_id)
-        err_str = ""
-        ret = None
 
-        if hostname != None:
+        if hostname is not None:
             logging.info("In DELETE method! Delete host by hostname: '%s'.", str(hostname))
             ret = self.host_dao.del_by_hostname(hostname)
             err_str = "Error oucurred when Delete host by hostname: '%s'" % hostname
-        elif host_id != None:
+        elif host_id is not None:
             logging.info("In DELETE method! Delete host by host_id: '%s'.", str(host_id))
             ret = self.host_dao.del_by_id(host_id)
             err_str = "Error oucurred when Delete host by host_id: '%s'" % str(host_id)
@@ -223,7 +215,7 @@ class HostHandler(tornado.web.RequestHandler):
             self.write(resp)
             return
         
-        if ret == None:
+        if ret is None:
             logging.error(err_str)
             resp = self.Resp.make_response(code=RespCode.INVALID_PARAMETER, err_str=err_str)
             self.write(resp)
