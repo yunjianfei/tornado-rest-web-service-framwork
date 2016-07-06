@@ -25,65 +25,75 @@ Below are some notices :
 
 """
 
-import string,os,sys,logging,signal,time
+import os
+import logging
+import signal
+import time
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from util.options import define,options
+from util.options import define, options
 from util.config import Config
 from util import torndb
-from util.dbconst import TableName,TableFields,TableSelectSql
+from util.dbconst import TableFields, TableSelectSql
 import util.globalvar as GlobalVar
 
 from service.host import HostHandler
 
-MODULE="master"
+MODULE = "master"
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
-CONF_FILE="conf/svc.conf"
+CONF_FILE = "conf/svc.conf"
 
-#Define command parameter
-define("port", default=None, help="Run server on a specific port, mast input", type=int)
+# Define command parameter
+define("port", default=None, help="Run server on a specific port, mast input",
+       type=int)
 
-#The config file parser
+
+# The config file parser
 def parse_config(conf_file):
-    #parse conf file
+    # parse conf file
     conf = Config(conf_file)
     conf.load_conf()
 
-#Init logging
+
+# Init logging
 def init_logging(port):
     log_file = MODULE + "." + str(port) + ".log"
     logger = logging.getLogger()
     logger.setLevel(Config.log_level)
 
-    #fh = logging.FileHandler(os.path.join(Config.log_path, log_file)) 
-    fh = logging.handlers.TimedRotatingFileHandler(os.path.join(Config.log_path, log_file), when='D', backupCount=10) 
+    # fh = logging.FileHandler(os.path.join(Config.log_path, log_file))
+    fh = logging.handlers.TimedRotatingFileHandler(
+        os.path.join(Config.log_path, log_file), when='D', backupCount=10)
     sh = logging.StreamHandler()
 
     ###########This set the logging level that show on the screen#############
-    #sh.setLevel(logging.DEBUG)
-    #sh.setLevel(logging.ERROR)
+    # sh.setLevel(logging.DEBUG)
+    # sh.setLevel(logging.ERROR)
 
     formatter = logging.Formatter('%(asctime)s -%(module)s:%(filename)s-L%(lineno)d-%(levelname)s: %(message)s')
-    fh.setFormatter(formatter) 
-    sh.setFormatter(formatter) 
+    fh.setFormatter(formatter)
+    sh.setFormatter(formatter)
 
     logger.addHandler(fh)
     logger.addHandler(sh)
-    logging.info("Current log level is : %s",logging.getLevelName(logger.getEffectiveLevel()))
+    logging.info("Current log level is : %s",
+                 logging.getLevelName(logger.getEffectiveLevel()))
 
 
 def sig_handler(sig, frame):
     logging.warning('Caught signal: %s', sig)
     tornado.ioloop.IOLoop.instance().add_callback(shutdown)
 
+
 def shutdown():
     logging.info('Stopping http server')
     http_server.stop()
 
-    logging.info('Master will shutdown in %s seconds ...', MAX_WAIT_SECONDS_BEFORE_SHUTDOWN)
+    logging.info('Master will shutdown in %s seconds ...',
+                 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN)
     io_loop = tornado.ioloop.IOLoop.instance()
 
     deadline = time.time() + MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
@@ -100,10 +110,13 @@ def shutdown():
 
     stop_loop()
 
+
 class MainHandler(tornado.web.RequestHandler):
     """docstring for MainHandler"""
+
     def get(self):
         self.write("This is SohuVideoCloud Master!")
+
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -124,17 +137,18 @@ class Application(tornado.web.Application):
 
         GlobalVar.set_db_handle(self.db)
 
-        super(Application,self).__init__(handlers,**settings)
-    
+        super(Application, self).__init__(handlers, **settings)
+
+
 def main():
     #################parse command#######################
     options.parse_command_line()
 
     if options.port == None:
         options.print_help()
-        return 
+        return
 
-    ############parse and load config file###############
+        ############parse and load config file###############
     parse_config(CONF_FILE)
 
     ############init logging##############################
@@ -143,7 +157,7 @@ def main():
     logging.info("Test info:Master start!")
     logging.error("Test error:Master start!")
     logging.debug("Test debug:Master start!")
-    
+
     ############setting tornado server#####################
     global http_server
 
@@ -161,6 +175,7 @@ def main():
     ############start tornado server#######################
     tornado.ioloop.IOLoop.instance().start()
     logging.info('Exit Master')
+
 
 if __name__ == "__main__":
     main()

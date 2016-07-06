@@ -9,8 +9,10 @@
 #
 #
 
-import json,logging,types
+import json
+import logging
 from util import tools
+
 
 class ResponseCode:
     SUCCESS = 0
@@ -21,53 +23,53 @@ class ResponseCode:
     NO_RECORD = 5
 
     code_string_EN = {
-        SUCCESS : "SUCCESS",
-        NO_PARAMETER : "NO_PARAMETER",
-        INVALID_PARAMETER : "INVALID_PARAMETER",
-        HAS_EXISTED : "HAS_EXISTED",
-        DB_ERROR : "DB_ERROR",
-        NO_RECORD : "NO_RECORD",
+        SUCCESS: "SUCCESS",
+        NO_PARAMETER: "NO_PARAMETER",
+        INVALID_PARAMETER: "INVALID_PARAMETER",
+        HAS_EXISTED: "HAS_EXISTED",
+        DB_ERROR: "DB_ERROR",
+        NO_RECORD: "NO_RECORD",
     }
 
     failure_reason_EN = {
-        SUCCESS : "",
-        NO_PARAMETER : "There is no parameter '%s'!",
-        INVALID_PARAMETER : "The value of parameter '%s' is invalid!",
-        HAS_EXISTED : "This object has existed in the table '%s'!",
-        DB_ERROR : "Database error when execute '%s'!",
-        NO_RECORD : "No record when query '%s'!",
+        SUCCESS: "",
+        NO_PARAMETER: "There is no parameter '%s'!",
+        INVALID_PARAMETER: "The value of parameter '%s' is invalid!",
+        HAS_EXISTED: "This object has existed in the table '%s'!",
+        DB_ERROR: "Database error when execute '%s'!",
+        NO_RECORD: "No record when query '%s'!",
     }
+
 
 class Response:
     def to_int(self, num):
-        if num == None:
+        if num is None:
             return num
 
         try:
-            num = tools.strip_string(num) 
+            num = tools.strip_string(num)
             value = int(num)
             return value
         except Exception, ex:
             logging.error("Convert '%s' to Int Error: %s", str(num), str(ex))
             return None
 
-
     def make_response(self, code, para=None, content=None, err_str=None):
-        response = {}
+        response = dict()
         response['response_code'] = code
         response['response_code_string'] = ResponseCode.code_string_EN[code]
 
         failure_reason = ""
         if code != ResponseCode.SUCCESS:
-            if para != None:
+            if para is not None:
                 failure_reason = ResponseCode.failure_reason_EN[code] % para
 
-            if err_str != None:
+            if err_str is not None:
                 failure_reason = failure_reason + err_str
 
             response['failure_reason'] = failure_reason
 
-        if content != None:
+        if content is not None:
             response['content'] = content
 
         return json.dumps(response, default=tools.json_date_default)
